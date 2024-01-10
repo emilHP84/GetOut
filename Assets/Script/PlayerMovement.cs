@@ -8,24 +8,21 @@ public class PlayerMovement : MonoBehaviour{
     Camera _camera;
     public float gravity = 9.81f;
 
+    private void OnEnable(){
+        PlayerManager.OnPlayerMove += Moving;
+    }
+    private void OnDisable(){
+        PlayerManager.OnPlayerMove -= Moving;
+    }
+
     void Awake(){
         _characterController = GetComponent<CharacterController>();
         _camera = GetComponentInChildren<Camera>();
     }
 
     
-    void Update(){
-        float horizotalMove = Input.GetAxisRaw("Horizontal");
-        float verticalMove = Input.GetAxisRaw("Vertical");
-        Vector3 move = Vector3.zero;
-
-        if (ComboController.ComboControllerActivated == false){
-            if (horizotalMove != 0 || verticalMove != 0){
-                move += Quaternion.Euler(0, _camera.transform.eulerAngles.y, 0) * new Vector3(horizotalMove * PlayerManager.instance._stat.speed * Time.deltaTime, 0, verticalMove * PlayerManager.instance._stat.speed * Time.deltaTime); ;
-            }
-        }
+    void Moving(Vector3 move, float speed){
+        move = Quaternion.Euler(0, _camera.transform.eulerAngles.y, 0) * move * (speed * Time.deltaTime);
         _characterController.Move(move);
-
-
     }
 }

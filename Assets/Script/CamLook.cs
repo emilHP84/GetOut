@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class CamLook : MonoBehaviour
-{
-    Vector2 Mouse;
+public class CamLook : MonoBehaviour{
     private float limitRotationY = 40;
-    
+
+    private void OnEnable(){
+        PlayerManager.OnPlayerLook += Looking;
+    }
+    private void OnDisable(){
+        PlayerManager.OnPlayerLook -= Looking;
+    }
+
     void Start(){
 
         Cursor.visible = false;
@@ -15,10 +20,9 @@ public class CamLook : MonoBehaviour
     }
 
     
-    void Update(){
-        Mouse.x += Input.GetAxis("Mouse X");
-        Mouse.y += Input.GetAxis("Mouse Y");
-        Mouse.y = Mathf.Clamp(Mouse.y, -limitRotationY, limitRotationY);
-        transform.localRotation = Quaternion.Euler(-Mouse.y + PlayerManager.instance._stat.turnSpeed * Time.deltaTime, Mouse.x + PlayerManager.instance._stat.turnSpeed * Time.deltaTime, 0) ;
+    void Looking(Vector2 look, float turnSpeed){
+        look.y = Mathf.Clamp(look.y, -limitRotationY, limitRotationY);
+        Quaternion newRotation = Quaternion.Euler(-look.y + turnSpeed * Time.deltaTime, look.x + turnSpeed * Time.deltaTime, 0);
+        transform.localRotation = Quaternion.Lerp(transform.localRotation, newRotation, 0.5f);
     }
 }
