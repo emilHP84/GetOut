@@ -7,25 +7,27 @@ using UnityEngine;
 
 public class ComboController : MonoBehaviour
 {
+    public CapacityManager capacityManager;
     public static bool ComboControllerActivated;
     public List<string> Combo = new List<string>();
     public GameObject CanvasCombo;
     public TextMeshProUGUI text;
 
 
-    private void Awake(){
-        
-    }
     void Start() { 
         CanvasCombo.SetActive(false);
     }
 
     void Update(){
-        if (CanvasCombo.activeSelf == true) StartCombo();
-        if (Input.GetKeyDown(KeyCode.Mouse0)){
-            if (CanvasCombo.activeSelf == true) ClosePannel();
-            else OpenPannel();
+        if (CapacityManager.SpellIsCasting == false)
+        {
+            if (CanvasCombo.activeSelf == true) StartCombo();
+            if (Input.GetKeyDown(KeyCode.Mouse0)){
+                if (CanvasCombo.activeSelf == true) ClosePannel();
+                else OpenPannel();
+            }
         }
+        else return;
     }
 
     void OpenPannel(){
@@ -37,8 +39,6 @@ public class ComboController : MonoBehaviour
         CanvasCombo.SetActive(false);
         ComboControllerActivated = false;
     }
-
-
 
     void StartCombo(){
         if (Input.GetKeyDown(KeyCode.W)){
@@ -83,7 +83,6 @@ public class ComboController : MonoBehaviour
         }
         UpdateText();
     }
-
     void ClearCombo(){
         Combo.Clear();
         for (int i = 0; i < 4; i++){
@@ -96,64 +95,49 @@ public class ComboController : MonoBehaviour
             text.text = Combo[0] + " " + Combo[1] + " " + Combo[2] + " " + Combo[3];
         }
     }
+    void CapacityDetector()
+    {
+        if (Combo.Contains(null))
+        {
+            StartCoroutine(capacityManager.Healing());
+        }
+
+        if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("...") && Combo[3].Contains("Z")){
+            StartCoroutine(capacityManager.ForwardSlap());
+            return;
+        }
+        if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("...") && Combo[3].Contains("Q")){
+            StartCoroutine(capacityManager.LeftSlap());
+            return;
+        }
+        if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("...") && Combo[3].Contains("D")){
+            StartCoroutine(capacityManager.RightSlap());
+            return;
+        }
+        if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("Q") && Combo[3].Contains("D")){
+            StartCoroutine(capacityManager.BalayageSlap());
+            return;
+        }
+        if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("...") && Combo[3].Contains("S")){
+            StartCoroutine(capacityManager.Dashing());
+            return;
+        }
+
+        if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("Z") && Combo[3].Contains("S")){
+            StartCoroutine(capacityManager.Graping());
+            return;
+        }
+
+        if (Combo[0].Contains("Z") && Combo[1].Contains("Q") && Combo[2].Contains("S") && Combo[3].Contains("D")){
+            StartCoroutine(capacityManager.BrazilZoning());
+            return;
+        }
+    }
     void CloseCombo(){
         CapacityDetector();
         ClearCombo();
     }
-
-
-    void CapacityDetector(){
-        if (Combo.Contains(null)) {
-            CapacityManager capacity = new Heal();
-            if(capacity is Heal){
-                Heal heal = (Heal)capacity;
-                heal.Healing();
-            }
-        }
-
-        if (Combo.Contains("Z") || Combo.Contains("Q") || Combo.Contains("D") || Combo.Contains("Q" + "D")) {
-            CapacityManager capacity = new Slap();
-            if (capacity is Slap){
-                Slap slap = (Slap)capacity;
-                if (Combo.Contains("Z")){
-                    slap.ForwardSlap();
-                }
-                if (Combo.Contains("Q")){
-                    slap.LeftSlap();
-                }
-                if (Combo.Contains("D")){
-                    slap.RightSlap();
-                }
-                if (Combo.Contains("Q" + "D")){
-                    slap.BalayageSlap();
-                }
-            }
-        }
-        
-        if (Combo.Contains("S")) {
-            CapacityManager capacity = new Dash();
-            if (capacity is Dash){
-                Dash dash = (Dash)capacity;
-                dash.Dashing();
-            }
-        }
-        
-        if (Combo.Contains("Z" + "S")) {
-            CapacityManager capacity = new Grab();
-            if (capacity is Grab){
-                Grab grab = (Grab)capacity;
-                grab.Graping();
-            }
-        }
-
-        if (Combo.Contains("Z" + "Q" + "S" + "D")) {
-            CapacityManager capacity = new BrazilZone();
-            if (capacity is BrazilZone){
-                BrazilZone brazilZone = (BrazilZone)capacity;
-                brazilZone.BrazilZoning();
-            }
-        }
-    }
+    
 
     
 }

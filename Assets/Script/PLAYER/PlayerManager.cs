@@ -4,15 +4,18 @@ using UnityEngine;
 
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerManager : MonoBehaviour{
+    public static PlayerManager instance;
     public STAT _stat;
 
+
+
     private void Awake(){
+        instance = this;
         _stat.health = _stat.maxHealth;
     }
-
-    private void Start()
-    {
-        
+    
+    private void Update(){
+        OnPlayerHealHandler(_stat.health, _stat.maxHealth);
     }
 
 
@@ -20,8 +23,7 @@ public class PlayerManager : MonoBehaviour{
     public delegate void PlayerHealHandler(int health, int maxHealth);
     public static event PlayerHealHandler OnCheckHealth;
     public void OnPlayerHealHandler(int health, int maxHealth){
-        health = _stat.health;
-        maxHealth = _stat.maxHealth;
+        OnCheckHealth?.Invoke(health,maxHealth);
     }
 
 
@@ -40,5 +42,15 @@ public class PlayerManager : MonoBehaviour{
     public void OnPlayerLookHandler(Vector3 mouse, float turnSpeed){
         turnSpeed = _stat.turnSpeed;
         OnPlayerLook?.Invoke(mouse, turnSpeed);
+    }
+
+
+
+    public delegate void TakeDamageHandler(int damage);
+    public static event TakeDamageHandler AsTakeDamage;
+    public static void AsTakeDamageHandler(int damage)
+    {
+        // dégât subie
+        AsTakeDamage?.Invoke(damage);
     }
 }
