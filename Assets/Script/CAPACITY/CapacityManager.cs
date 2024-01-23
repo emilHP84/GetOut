@@ -5,15 +5,17 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 public class CapacityManager : MonoBehaviour{
+    EntityManager entityManager;
     public static bool SpellIsCasting;
-    public static int damageCap;
     [SerializeField] public List<CapacitySTAT> Cap = new List<CapacitySTAT>();
     [SerializeField] public List<GameObject> patern = new List<GameObject>();
     [SerializeField] public Transform cameraTransform;
 
     private Vector3 cameraForwardX;
     private float time = 0f;
-
+    private void Awake(){
+        entityManager = GetComponent<EntityManager>();
+    }
     private void FixedUpdate(){
         cameraForwardX = Camera.main.transform.forward;
         cameraForwardX.y = 0;
@@ -26,20 +28,26 @@ public class CapacityManager : MonoBehaviour{
         patern[sus].gameObject.SetActive(true);
         yield return new WaitForSecondsRealtime(Cap[0].spellCast);
         //----------Phase 2-----------//
+
+        List<Entity> entitiesAlreadyDamaged = new List<Entity>();
         if (patern[sus].GetComponent<Patern>().Entity.Count > 0){
-            for(int i = 0; i < patern[sus].GetComponent<Patern>().Entity.Count; i++){
-                damageCap = Cap[0].amount;
-                EntityManager.AsTakeDamageHandler(damageCap);
+            for (int j = 0; j < patern[sus].GetComponent<Patern>().Entity.Count; j++){
+                Entity currentEntity = patern[sus].GetComponent<Patern>().Entity[j].GetComponent<Entity>();
+
+                if (!entitiesAlreadyDamaged.Contains(currentEntity)){
+                    int damageAmount = Cap[0].amount;
+                    TakeDamage(currentEntity.GetComponent<Entity>(), damageAmount);
+                    entitiesAlreadyDamaged.Add(currentEntity);
+                }
             }
         }
+
         yield return new WaitForSecondsRealtime(Cap[0].spellduring);
         //----------Phase 3-----------//
         patern[sus].gameObject.SetActive(false);
         SpellIsCasting = false;
         yield return null;
     }
-
-
 
     public IEnumerator LeftSlap(){
         //----------Phase 1-----------//
@@ -50,8 +58,8 @@ public class CapacityManager : MonoBehaviour{
         //----------Phase 2-----------//
         if (patern[1].GetComponent<Patern>().Entity.Count > 0){
             for (int i = 0; i < patern[sus].GetComponent<Patern>().Entity.Count; i++){
-                damageCap = Cap[0].amount;
-                EntityManager.AsTakeDamageHandler(damageCap);
+                
+                
             }
         }
         yield return new WaitForSecondsRealtime(Cap[0].spellduring);
@@ -60,8 +68,6 @@ public class CapacityManager : MonoBehaviour{
         SpellIsCasting = false;
         yield return null;
     }
-
-
 
     public IEnumerator RightSlap(){
         //----------Phase 1-----------//
@@ -72,8 +78,8 @@ public class CapacityManager : MonoBehaviour{
         //----------Phase 2-----------//
         if (patern[sus].GetComponent<Patern>().Entity.Count > 0){
             for (int i = 0; i < patern[sus].GetComponent<Patern>().Entity.Count; i++){
-                damageCap = Cap[0].amount;
-                EntityManager.AsTakeDamageHandler(damageCap);
+                
+                
             }
         }
         yield return new WaitForSecondsRealtime(Cap[0].spellduring);
@@ -82,8 +88,6 @@ public class CapacityManager : MonoBehaviour{
         SpellIsCasting = false;
         yield return null;
     }
-
-
 
     public IEnumerator BalayageSlap(){
         SpellIsCasting = true;
@@ -95,11 +99,9 @@ public class CapacityManager : MonoBehaviour{
             yield return new WaitForSecondsRealtime(Cap[0].spellCast);
             //----------Phase 2-----------//
             if (patern[sus].GetComponent<Patern>().Entity.Count > 0){
-                for (int j = 0; j < patern[sus].GetComponent<Patern>().Entity.Count; j++)
-                {
-                    damageCap = Cap[0].amount;
-                    EntityManager.AsTakeDamageHandler(damageCap);
-                }
+                List<GameObject> entitiesAlreadyDamaged = new List<GameObject>();
+
+             
             }
             yield return new WaitForSecondsRealtime(Cap[0].spellduring);
             //----------Phase 3-----------//
@@ -109,20 +111,19 @@ public class CapacityManager : MonoBehaviour{
         yield return null;
     }
 
-
-
     public IEnumerator Dashing(){
         SpellIsCasting = true;
+        ComboController.Attackmode = true;
         //----------Phase 1-----------//
         float Dist = 3.0f;
         while (time < Cap[1].spellCast){
             RaycastHit hit;
-            if (Physics.Raycast(transform.position,-transform.forward, out hit, Dist)){
+            if (Physics.Raycast(transform.position,-cameraForwardX, out hit, Dist)){
                 if (hit.collider.CompareTag("Obstacle")){
-                    break;
+                    yield return null;
                 }
             }
-            transform.Translate(-cameraForwardX.normalized * 5 * Time.deltaTime);
+            else transform.Translate(-cameraForwardX.normalized * 5 * Time.deltaTime);
             float t = time / Cap[1].spellCast;
             
             time += Time.deltaTime;
@@ -132,12 +133,15 @@ public class CapacityManager : MonoBehaviour{
 
         while (time < Cap[1].spellduring){
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, -transform.forward, out hit, Dist)){
+            if (Physics.Raycast(transform.position, cameraForwardX, out hit, Dist)){ 
                 if (hit.collider.CompareTag("Obstacle")){
-                    break;
+                    SpellIsCasting = false;
+                    ComboController.Attackmode = false;
+                    yield break;
+
                 }
             }
-            transform.Translate(cameraForwardX.normalized * Time.deltaTime * (PlayerManager.instance._stat.speed * 10));
+            transform.Translate(cameraForwardX.normalized * Time.deltaTime * (PlayerManager.instance._stat.speed * 17));
             float t = time / Cap[1].spellduring;
 
             time += Time.deltaTime;
@@ -146,10 +150,9 @@ public class CapacityManager : MonoBehaviour{
         time = 0f;
         
         SpellIsCasting = false;
+        ComboController.Attackmode = false;
         yield return null;
     }
-
-    
 
     public IEnumerator Graping(){
         return null;
@@ -162,5 +165,10 @@ public class CapacityManager : MonoBehaviour{
     public IEnumerator Healing()
     {
         return null;
+    }
+
+    void TakeDamage(Entity entity, int damage){
+        entityManager.AsTakeDamageHandler(entity, damage);
+        Debug.Log(damage);
     }
 }

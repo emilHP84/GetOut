@@ -8,10 +8,10 @@ public class PlayerManager : MonoBehaviour{
     public STAT _stat;
 
 
-
     private void Awake(){
         instance = this;
         _stat.health = _stat.maxHealth;
+        ComboController.Attackmode = false;
     }
     
     private void Update(){
@@ -31,8 +31,10 @@ public class PlayerManager : MonoBehaviour{
     public delegate void PlayerMoveHandler(Vector3 move,float speed);
     public static event PlayerMoveHandler OnPlayerMove;
     public void OnPlayerMoveHandler(Vector3 move,float speed){
-        speed = _stat.speed;
-        if(ComboController.ComboControllerActivated == false) OnPlayerMove?.Invoke(move, speed);
+        if (ComboController.Attackmode == false){
+            speed = _stat.speed;
+            if (ComboController.ComboControllerActivated == false) OnPlayerMove?.Invoke(move, speed);
+        }
     }
 
 

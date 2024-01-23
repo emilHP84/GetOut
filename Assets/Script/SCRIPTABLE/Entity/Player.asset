@@ -15,5 +15,5 @@ MonoBehaviour:
   maxHealth: 4500
   health: 4500
   endurance: 100
-  speed: 15
+  speed: 8
   turnSpeed: 15

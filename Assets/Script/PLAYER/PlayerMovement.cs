@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour{
     CharacterController _characterController;
     Camera _camera;
     public float gravity = 9.81f;
+    public Vector3 myMove;
 
     private void OnEnable(){
         PlayerManager.OnPlayerMove += Moving;
@@ -22,7 +23,7 @@ public class PlayerMovement : MonoBehaviour{
 
     
     void Moving(Vector3 move, float speed){
-        move = Quaternion.Euler(0, _camera.transform.eulerAngles.y, 0) * move * (speed * Time.deltaTime);
-        _characterController.Move(move);
+        myMove = Quaternion.Euler(0, _camera.transform.eulerAngles.y, 0) * move * (speed * Time.deltaTime);
+        _characterController.Move(myMove);
     }
 }

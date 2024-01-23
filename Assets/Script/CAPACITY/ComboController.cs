@@ -9,6 +9,7 @@ public class ComboController : MonoBehaviour
 {
     public CapacityManager capacityManager;
     public static bool ComboControllerActivated;
+    public static bool Attackmode;
     public List<string> Combo = new List<string>();
     public GameObject CanvasCombo;
     public TextMeshProUGUI text;
@@ -104,38 +105,44 @@ public class ComboController : MonoBehaviour
 
         if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("...") && Combo[3].Contains("Z")){
             StartCoroutine(capacityManager.ForwardSlap());
+            ClearCombo();
             return;
         }
         if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("...") && Combo[3].Contains("Q")){
             StartCoroutine(capacityManager.LeftSlap());
+            ClearCombo();
             return;
         }
         if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("...") && Combo[3].Contains("D")){
             StartCoroutine(capacityManager.RightSlap());
+            ClearCombo();
             return;
         }
         if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("Q") && Combo[3].Contains("D")){
             StartCoroutine(capacityManager.BalayageSlap());
+            ClearCombo();
             return;
         }
         if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("...") && Combo[3].Contains("S")){
             StartCoroutine(capacityManager.Dashing());
+            ClearCombo();
             return;
         }
 
         if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("Z") && Combo[3].Contains("S")){
             StartCoroutine(capacityManager.Graping());
+            ClearCombo();
             return;
         }
 
         if (Combo[0].Contains("Z") && Combo[1].Contains("Q") && Combo[2].Contains("S") && Combo[3].Contains("D")){
             StartCoroutine(capacityManager.BrazilZoning());
+            ClearCombo();
             return;
         }
     }
     void CloseCombo(){
         CapacityDetector();
-        ClearCombo();
     }
     
 
