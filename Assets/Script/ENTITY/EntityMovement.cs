@@ -35,20 +35,20 @@ public class EntityMovement : MonoBehaviour
             }
             else{
                 float playerDistance = Vector3.Distance(transform.position, PlayerManager.instance.gameObject.transform.position);
+                
                 if (playerDistance < reculDistance)
                 {
                     Vector3 reculeDirection = transform.position - PlayerManager.instance.gameObject.transform.position;
-                    navMeshAgent.SetDestination(transform.position + reculeDirection.normalized * reculDistance);
+                    Vector3 newDestination = transform.position + reculeDirection.normalized * reculDistance;
 
-                    RaycastHit hit;
-                    if (Physics.Raycast(transform.position, new Vector3(0,0,1), out hit, reculDistance + 5)){
-                        if (hit.collider.CompareTag("Obstacle")){
-                            navMeshAgent.SetDestination(transform.position + reculeDirection.normalized * reculDistance + Vector3.left);
-                        }
-                    }
-                    if (Physics.Raycast(transform.position, new Vector3(1,0,1), out hit, reculDistance + 5)){
-                        if (hit.collider.CompareTag("Obstacle")){
-                            navMeshAgent.SetDestination(transform.position + reculeDirection.normalized * reculDistance + Vector3.right);
+                    navMeshAgent.SetDestination(newDestination);
+
+                    Collider[] hitColliders = Physics.OverlapSphere(transform.position, reculDistance + 5, LayerMask.GetMask("Obstacle"),QueryTriggerInteraction.Ignore);
+                    foreach (Collider collider in hitColliders){
+                        
+                        if (collider.CompareTag("Obstacle")){
+                            
+                            gameObject.transform.position = newDestination + new Vector3(0, 0, -1);
                         }
                     }
                 }

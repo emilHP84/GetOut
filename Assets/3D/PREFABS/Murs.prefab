@@ -112,6 +112,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: murs
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: dd22423762188cf40ba409c3a132baa4, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416272007918961125, guid: dd22423762188cf40ba409c3a132baa4, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8416272007918961125, guid: dd22423762188cf40ba409c3a132baa4, type: 3}
       propertyPath: m_TagString
       value: Obstacle

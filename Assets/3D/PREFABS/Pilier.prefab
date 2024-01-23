@@ -105,12 +105,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 0a545a9d4361c734086a2a9a06c6fe4b, type: 2}
     - target: {fileID: -516098083770646512, guid: bc8627db9bb3d6f4592a9a769f74beed, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -516098083770646512, guid: bc8627db9bb3d6f4592a9a769f74beed, type: 3}
       propertyPath: m_TagString
       value: Obstacle
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: bc8627db9bb3d6f4592a9a769f74beed, type: 3}
       propertyPath: m_Name
       value: pilier
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: bc8627db9bb3d6f4592a9a769f74beed, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4083501151425157549, guid: bc8627db9bb3d6f4592a9a769f74beed, type: 3}
       propertyPath: m_LocalPosition.y
