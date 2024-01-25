@@ -22,7 +22,7 @@ public class CamLook : MonoBehaviour{
     
     void Looking(Vector2 look, float turnSpeed){
         look.y = Mathf.Clamp(look.y, -limitRotationY, limitRotationY);
-        Quaternion newRotation = Quaternion.Euler(-look.y + turnSpeed * Time.deltaTime, look.x + turnSpeed * Time.deltaTime, 0);
+        Quaternion newRotation = Quaternion.Euler(-look.y, look.x, 0);
         transform.localRotation = Quaternion.Lerp(transform.localRotation, newRotation, 0.5f);
     }
 }

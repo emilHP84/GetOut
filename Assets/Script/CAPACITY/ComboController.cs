@@ -98,9 +98,10 @@ public class ComboController : MonoBehaviour
     }
     void CapacityDetector()
     {
-        if (Combo.Contains(null))
-        {
+        if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("...") && Combo[3].Contains("...")){
             StartCoroutine(capacityManager.Healing());
+            ClearCombo();
+            return;
         }
 
         if (Combo[0].Contains("...") && Combo[1].Contains("...") && Combo[2].Contains("...") && Combo[3].Contains("Z")){

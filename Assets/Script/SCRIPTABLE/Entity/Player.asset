@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Player
   m_EditorClassIdentifier: 
   maxHealth: 4500
-  health: 4500
+  health: 4501
   endurance: 100
-  speed: 8
+  speed: 11
   turnSpeed: 15
