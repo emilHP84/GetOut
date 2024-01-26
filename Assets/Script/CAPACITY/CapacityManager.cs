@@ -4,10 +4,13 @@ using System.Linq;
 using System.Xml;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class CapacityManager : MonoBehaviour{
+public class CapacityManager : MonoBehaviour
+{
     EntityManager entityManager;
     public static bool SpellIsCasting;
+    public static bool GrabCasted;
 
     [Header(" Capacity managerment")]
     [SerializeField] public List<CapacitySTAT> Cap = new List<CapacitySTAT>();
@@ -18,20 +21,30 @@ public class CapacityManager : MonoBehaviour{
     [SerializeField] private GameObject exitCharge;
     [SerializeField] private List<GameObject> entitySprites = new List<GameObject>();
 
+    [Header("Grab")]
+    [SerializeField] private GameObject grabbingTransform;
+
     private Vector3 cameraForwardX;
     private Quaternion cameraRotationY;
     private float time = 0f;
-    private void Awake(){
+    private void Awake()
+    {
         entityManager = GetComponent<EntityManager>();
         foreach (GameObject objet in entitySprites) { objet.SetActive(false); }
     }
-    private void FixedUpdate(){
+    private void FixedUpdate()
+    {
         cameraForwardX = Camera.main.transform.forward;
         cameraForwardX.y = 0;
         cameraRotationY.y = 0;
     }
 
-    public IEnumerator ForwardSlap(){
+    void TakeDamage(Entity entity, int damage){
+        entityManager.AsTakeDamageHandler(entity, damage);
+    }
+
+    public IEnumerator ForwardSlap()
+    {
         //----------Phase 1-----------//
         SpellIsCasting = true;
         int sus = 0;
@@ -40,18 +53,21 @@ public class CapacityManager : MonoBehaviour{
         //----------Phase 2-----------//
 
         List<Entity> entitiesAlreadyDamaged = new List<Entity>();
-        if (patern[sus].GetComponent<Patern>().Entity.Count > 0){
-            for (int j = 0; j < patern[sus].GetComponent<Patern>().Entity.Count; j++){
+        if (patern[sus].GetComponent<Patern>().Entity.Count > 0)
+        {
+            for (int j = 0; j < patern[sus].GetComponent<Patern>().Entity.Count; j++)
+            {
                 Entity currentEntity = patern[sus].GetComponent<Patern>().Entity[j].GetComponent<Entity>();
 
-                if (!entitiesAlreadyDamaged.Contains(currentEntity)){
+                if (!entitiesAlreadyDamaged.Contains(currentEntity))
+                {
                     int damageAmount = Cap[0].amount;
-                    TakeDamage(currentEntity.GetComponent<Entity>(), damageAmount);
+                    TakeDamage(currentEntity, damageAmount);
                     entitiesAlreadyDamaged.Add(currentEntity);
                 }
             }
         }
-        
+
         yield return new WaitForSecondsRealtime(Cap[0].spellduring);
         //----------Phase 3-----------//
 
@@ -60,7 +76,8 @@ public class CapacityManager : MonoBehaviour{
         yield return null;
     }
 
-    public IEnumerator LeftSlap(){
+    public IEnumerator LeftSlap()
+    {
         //----------Phase 1-----------//
         SpellIsCasting = true;
         int sus = 1;
@@ -69,14 +86,16 @@ public class CapacityManager : MonoBehaviour{
         //----------Phase 2-----------//
 
         List<Entity> entitiesAlreadyDamaged = new List<Entity>();
-        if (patern[1].GetComponent<Patern>().Entity.Count > 0){
-            for (int i = 0; i < patern[sus].GetComponent<Patern>().Entity.Count; i++){
+        if (patern[1].GetComponent<Patern>().Entity.Count > 0)
+        {
+            for (int i = 0; i < patern[sus].GetComponent<Patern>().Entity.Count; i++)
+            {
                 Entity currentEntity = patern[sus].GetComponent<Patern>().Entity[i].GetComponent<Entity>();
 
                 if (!entitiesAlreadyDamaged.Contains(currentEntity))
                 {
                     int damageAmount = Cap[0].amount;
-                    TakeDamage(currentEntity.GetComponent<Entity>(), damageAmount);
+                    TakeDamage(currentEntity, damageAmount);
                     entitiesAlreadyDamaged.Add(currentEntity);
                 }
             }
@@ -90,7 +109,8 @@ public class CapacityManager : MonoBehaviour{
         yield return null;
     }
 
-    public IEnumerator RightSlap(){
+    public IEnumerator RightSlap()
+    {
         //----------Phase 1-----------//
         SpellIsCasting = true;
         int sus = 2;
@@ -99,14 +119,16 @@ public class CapacityManager : MonoBehaviour{
         //----------Phase 2-----------//
 
         List<Entity> entitiesAlreadyDamaged = new List<Entity>();
-        if (patern[sus].GetComponent<Patern>().Entity.Count > 0){
-            for (int i = 0; i < patern[sus].GetComponent<Patern>().Entity.Count; i++){
+        if (patern[sus].GetComponent<Patern>().Entity.Count > 0)
+        {
+            for (int i = 0; i < patern[sus].GetComponent<Patern>().Entity.Count; i++)
+            {
                 Entity currentEntity = patern[sus].GetComponent<Patern>().Entity[i].GetComponent<Entity>();
 
                 if (!entitiesAlreadyDamaged.Contains(currentEntity))
                 {
                     int damageAmount = Cap[0].amount;
-                    TakeDamage(currentEntity.GetComponent<Entity>(), damageAmount);
+                    TakeDamage(currentEntity, damageAmount);
                     entitiesAlreadyDamaged.Add(currentEntity);
                 }
             }
@@ -120,7 +142,8 @@ public class CapacityManager : MonoBehaviour{
         yield return null;
     }
 
-    public IEnumerator BalayageSlap(){
+    public IEnumerator BalayageSlap()
+    {
         SpellIsCasting = true;
         for (int i = 0; i < 4; i++)
         {
@@ -130,14 +153,16 @@ public class CapacityManager : MonoBehaviour{
             yield return new WaitForSecondsRealtime(Cap[0].spellCast);
             //----------Phase 2-----------//
             List<Entity> entitiesAlreadyDamaged = new List<Entity>();
-            if (patern[sus].GetComponent<Patern>().Entity.Count > 0){
-                for (int j = 0; j < patern[sus].GetComponent<Patern>().Entity.Count; j++){
+            if (patern[sus].GetComponent<Patern>().Entity.Count > 0)
+            {
+                for (int j = 0; j < patern[sus].GetComponent<Patern>().Entity.Count; j++)
+                {
                     Entity currentEntity = patern[sus].GetComponent<Patern>().Entity[j].GetComponent<Entity>();
 
                     if (!entitiesAlreadyDamaged.Contains(currentEntity))
                     {
                         int damageAmount = Cap[0].amount;
-                        TakeDamage(currentEntity.GetComponent<Entity>(), damageAmount);
+                        TakeDamage(currentEntity, damageAmount);
                         entitiesAlreadyDamaged.Add(currentEntity);
                     }
                 }
@@ -152,7 +177,8 @@ public class CapacityManager : MonoBehaviour{
         yield return null;
     }
 
-    public IEnumerator Dashing(){
+    public IEnumerator Dashing()
+    {
         SpellIsCasting = true;
         ComboController.Attackmode = true;
         List<GameObject> entityGored = new List<GameObject>();
@@ -161,26 +187,32 @@ public class CapacityManager : MonoBehaviour{
         patern[sus].gameObject.SetActive(true);
 
         float Dist = 3.0f;
-        while (time < Cap[2].spellCast){
+        while (time < Cap[2].spellCast)
+        {
             RaycastHit hit;
-            if (Physics.Raycast(transform.position,-cameraForwardX, out hit, Dist)){
-                if (hit.collider.CompareTag("Obstacle")){
+            if (Physics.Raycast(transform.position, -cameraForwardX, out hit, Dist))
+            {
+                if (hit.collider.CompareTag("Obstacle"))
+                {
                     yield return null;
                 }
             }
             else PlayerManager.instance.transform.Translate(-cameraForwardX.normalized * 5 * Time.deltaTime);
             float t = time / Cap[1].spellCast;
-            
+
             time += Time.deltaTime;
             yield return null;
         }
         time = 0f;
         //----------Phase 2-----------//
-        while (time < Cap[2].spellduring){
+        while (time < Cap[2].spellduring)
+        {
             List<GameObject> entityGoreded = new List<GameObject>();
             entityGored = entityGoreded;
-            if (patern[sus].GetComponent<Patern>().Entity.Count > 0){
-                for (int i = 0; i < patern[sus].GetComponent<Patern>().Entity.Count; i++){
+            if (patern[sus].GetComponent<Patern>().Entity.Count > 0)
+            {
+                for (int i = 0; i < patern[sus].GetComponent<Patern>().Entity.Count; i++)
+                {
                     entityGoreded.Add(patern[sus].GetComponent<Patern>().Entity[i]);
                     patern[sus].GetComponent<Patern>().Entity[i].gameObject.SetActive(false);
 
@@ -191,14 +223,32 @@ public class CapacityManager : MonoBehaviour{
                 }
             }
             RaycastHit hit;
-            
-            if (Physics.Raycast(transform.position, cameraForwardX, out hit, Dist)){ 
-                if (hit.collider.CompareTag("Obstacle")){
-                    for (int i = 0; i < entityGored.Count; i++){
+
+            if (Physics.Raycast(transform.position, cameraForwardX, out hit, Dist))
+            {
+                if (hit.collider.CompareTag("Obstacle"))
+                {
+                    List<Entity> entitiesAlreadyDamaged = new List<Entity>();
+                    if (patern[sus].GetComponent<Patern>().Entity.Count > 0)
+                    {
+                        for (int j = 0; j < patern[sus].GetComponent<Patern>().Entity.Count; j++)
+                        {
+                            Entity currentEntity = patern[sus].GetComponent<Patern>().Entity[j].GetComponent<Entity>();
+
+                            if (!entitiesAlreadyDamaged.Contains(currentEntity))
+                            {
+                                int damageAmount = Cap[0].amount;
+                                TakeDamage(currentEntity, damageAmount);
+                                entitiesAlreadyDamaged.Add(currentEntity);
+                            }
+                        }
+                    }
+                    for (int i = 0; i < entityGored.Count; i++)
+                    {
                         entityGoreded[i].gameObject.SetActive(true);
                         entityGoreded[i].gameObject.transform.position = exitCharge.transform.position;
                     }
-                    foreach(GameObject objet in entitySprites) { objet.SetActive(false); }
+                    foreach (GameObject objet in entitySprites) { objet.SetActive(false); }
                     patern[sus].GetComponent<Patern>().Entity.Clear();
                     entityGoreded.Clear();
                     SpellIsCasting = false;
@@ -213,14 +263,16 @@ public class CapacityManager : MonoBehaviour{
             yield return null;
         }
         time = 0f;
-        for (int i = 0; i < entityGored.Count; i++){
-            entityGored[i].gameObject.SetActive(true); 
+        for (int i = 0; i < entityGored.Count; i++)
+        {
+            entityGored[i].gameObject.SetActive(true);
+            
             entityGored[i].gameObject.transform.position = exitCharge.transform.position;
         }
         foreach (GameObject objet in entitySprites) { objet.SetActive(false); }
         patern[sus].GetComponent<Patern>().Entity.Clear();
         entityGored.Clear();
-        
+
         //----------Phase 3-----------//
         patern[sus].gameObject.SetActive(false);
         SpellIsCasting = false;
@@ -228,38 +280,83 @@ public class CapacityManager : MonoBehaviour{
         yield return null;
     }
 
-    public IEnumerator Graping(){
-        return null;
-    }
-
-    public IEnumerator BrazilZoning(){
-        return null;
-    }
-
-    public IEnumerator Healing(){
+    public IEnumerator Graping()
+    { 
         //----------Phase 1-----------//
-        int sus = 7;
+        int sus = 5;
+        SpellIsCasting = true;
         patern[sus].gameObject.SetActive(true);
-        yield return new WaitForSecondsRealtime(Cap[0].spellCast);
+        yield return new WaitForSecondsRealtime(Cap[2].spellCast);
         //----------Phase 2-----------//
-        for(float i = 0; i < PlayerManager.instance._stat.health + 500 || i <= PlayerManager.instance._stat.maxHealth  ; i += 0.1f){
-            HealthRegeneration();
-            yield return new WaitForSecondsRealtime(Cap[4].spellduring);
+        if (patern[sus].GetComponent<Patern>().Entity.Count > 0)
+        {
+            GrabCasted = true;
+            for (int j = 0; j < patern[sus].GetComponent<Patern>().Entity.Count; j++)
+            {
+                patern[sus].GetComponent<Patern>().Entity[j].GetComponent<NavMeshAgent>().enabled = false;
+                patern[sus].GetComponent<Patern>().Entity[j].gameObject.transform.position = grabbingTransform.transform.position;
+                int damageAmount = Cap[0].amount;
+                TakeDamage(patern[sus].GetComponent<Patern>().Entity[j].GetComponent<Entity>(), damageAmount);
+                patern[sus].GetComponent<Patern>().Entity[j].GetComponent<NavMeshAgent>().enabled = true;
+            }
+        }
+        patern[sus].GetComponent<Patern>().Entity.Clear();
+        patern[sus].gameObject.SetActive(false);
+        GrabCasted = false;
+        SpellIsCasting = false;
+        yield return null;
+    }
+
+    public IEnumerator BrazilZoning()
+    {
+        //----------Phase 1-----------//
+        int sus = 6;
+        patern[sus].gameObject.SetActive(true);
+        yield return new WaitForSecondsRealtime(Cap[3].spellCast);
+        //----------Phase 2-----------//
+        for (float i = 0; i < 60; i += 0.1f)
+        {
+            List<Entity> entitiesAlreadyDamaged = new List<Entity>();
+            if (patern[sus].GetComponent<Patern>().Entity.Count > 0)
+            {
+                for (int j = 0; j < patern[sus].GetComponent<Patern>().Entity.Count; j++)
+                {
+                    Entity currentEntity = patern[sus].GetComponent<Patern>().Entity[j].GetComponent<Entity>();
+
+                    if (!entitiesAlreadyDamaged.Contains(currentEntity))
+                    {
+                        int damageAmount = Cap[3].amount;
+                        TakeDamage(currentEntity, damageAmount);
+                        entitiesAlreadyDamaged.Add(currentEntity);
+                    }
+                }
+            }
+            yield return new WaitForSecondsRealtime(Cap[3].spellduring);
+            patern[sus].GetComponent<Patern>().Entity.Clear();
         }
         patern[sus].gameObject.SetActive(false);
         yield return null;
     }
 
-
-
-
-    void TakeDamage(Entity entity, int damage){
-        entityManager.AsTakeDamageHandler(entity, damage);
+    public IEnumerator Healing()
+    {
+        //----------Phase 1-----------//
+        int sus = 7;
+        patern[sus].gameObject.SetActive(true);
+        yield return new WaitForSecondsRealtime(Cap[4].spellCast);
+        //----------Phase 2-----------//
+        for (float i = 0; i < PlayerManager.instance._stat.health + 500 || i <= PlayerManager.instance._stat.maxHealth; i += 0.1f){
+            HealthRegeneration();
+            yield return new WaitForSecondsRealtime(Cap[0].spellduring);
+        }
+        patern[sus].gameObject.SetActive(false);
+        yield return null;
     }
 
-    void HealthRegeneration(){
-       if (PlayerManager.instance._stat.health <= PlayerManager.instance._stat.maxHealth){
+    void HealthRegeneration()
+    {
+        if (PlayerManager.instance._stat.health <= PlayerManager.instance._stat.maxHealth){
             PlayerManager.instance._stat.health += 1;
-       }
+        }
     }
 }

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c43f611f639d01546959e24f78830c47, type: 3}
   m_Name: brazil
   m_EditorClassIdentifier: 
-  amount: 0
-  spellCast: 0
-  spellduring: 0
-  speedDiminusion: 0
-  sensitivityDiminution: 0
+  amount: 1
+  spellCast: 2
+  spellduring: 0.1
+  speedDiminusion: 5
+  sensitivityDiminution: 5

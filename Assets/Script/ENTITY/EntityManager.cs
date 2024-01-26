@@ -33,5 +33,12 @@ public class EntityManager : MonoBehaviour
     public void AsTakeDamageHandler(Entity entity, int damage){ 
         AsTakeDamage?.Invoke(entity, damage);
     }
+
+    public delegate void EntityAttackHandler(int damage);
+    public static event EntityAttackHandler AsAttack;
+    public void AsAttackHandler(int damage)
+    {
+        AsAttack?.Invoke(damage);
+    }
 }
 

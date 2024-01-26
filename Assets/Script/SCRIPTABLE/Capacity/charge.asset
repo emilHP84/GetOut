@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c43f611f639d01546959e24f78830c47, type: 3}
   m_Name: charge
   m_EditorClassIdentifier: 
-  amount: 5
+  amount: 25
   spellCast: 2
   spellduring: 5
   speedDiminusion: 0

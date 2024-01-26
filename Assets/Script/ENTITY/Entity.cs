@@ -19,7 +19,11 @@ public class Entity : MonoBehaviour
 
     
     void Update(){
-        entityManager.OnEntityHealHandler(_stat.health, _stat.maxHealth);
-        entityManager.OnEntityMoveHandler(_stat.speed);
+        if (_stat.health > 0){
+            entityManager.OnEntityHealHandler(_stat.health, _stat.maxHealth);
+            if (CapacityManager.GrabCasted == false){
+                entityManager.OnEntityMoveHandler(_stat.speed);
+            }entityManager.AsAttackHandler(_stat.endurance);
+        }
     }
 }

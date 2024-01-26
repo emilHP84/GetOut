@@ -19,6 +19,5 @@ public class GameManager : MonoBehaviour
 
     public static void IsDead(){
         OngameOver?.Invoke();
-        Debug.Log("test");
     }
 }

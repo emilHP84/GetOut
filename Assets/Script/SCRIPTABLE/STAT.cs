@@ -6,7 +6,7 @@ using UnityEngine;
 public class STAT : ScriptableObject {
     public int maxHealth;
     public int health;
-    public float endurance;
+    public int endurance;
     public float speed;
     public float turnSpeed;
 }
